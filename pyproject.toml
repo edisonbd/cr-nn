@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cr-nn"
+version = "0.1.0"
+description = "CR-geometry neural networks: replacing attention with Heisenberg-group Szegő projection"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "CR-NN project" }]
+
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "torch>=2.1",
+]
+
+[project.optional-dependencies]
+mlx = ["mlx>=0.20"]          # only installable on Apple Silicon
+dev = ["pytest>=7.4", "pytest-xdist"]
+
+[tool.setuptools.packages.find]
+include = ["crnn*"]
+exclude = ["experiments*", "tests*"]
+
+# ---- experiment scripts are not installed packages ----
+[tool.setuptools]
+py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "experiments/01_unit_tests"]
+python_files = ["test_*.py"]
+addopts = "-q"

@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large / downloaded artifacts (not source)
+*.exe
+git-installer.exe
+python-installer.exe
+
+# Experiment outputs (regenerable; keep scripts, not dumps)
+experiments/**/outputs/
+experiments/**/runs/
+*.pt
+*.ckpt
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/

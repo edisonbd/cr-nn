@@ -1,0 +1,250 @@
+% CR-NN 参考文献
+% 稳固性标注: [S]=稳固 [C]=有条件 [W]=弱/缺文献
+
+% ============================================================
+% Heisenberg 群与子拉普拉斯（核心数学）
+% ============================================================
+
+@book{thangavelu1998heisenberg,
+  author    = {Thangavelu, S.},
+  title     = {Harmonic Analysis on the {H}eisenberg Group},
+  publisher = {Birkh\"auser},
+  year      = {1998},
+  note      = {[S] \Delta_b 谱 (2k+n)|\lambda|, Hermite-Laguerre 基, 标准教材}
+}
+
+@article{folland1975subelliptic,
+  author  = {Folland, G. B.},
+  title   = {Subelliptic estimates and function spaces on nilpotent groups},
+  journal = {Mathematische Zeitschrift},
+  volume  = {144},
+  pages   = {49--68},
+  year    = {1975},
+  note    = {[S] Kor\'anyi 核闭式 c_n, \Delta_b 基本解}
+}
+
+@book{follandstein1982hardy,
+  author    = {Folland, G. B. and Stein, E. M.},
+  title     = {Hardy Spaces on Homogeneous Groups},
+  publisher = {Princeton University Press},
+  year      = {1982},
+  note      = {[S] 齐次群上分析基础}
+}
+
+@article{koranyi1985geometric,
+  author  = {Kor\'anyi, A.},
+  title   = {Geometric properties of {H}eisenberg-type groups},
+  journal = {Advances in Mathematics},
+  volume  = {56},
+  pages   = {28--38},
+  year    = {1985},
+  note    = {[S] Kor\'anyi-Cygan 距离 \rho}
+}
+
+@article{gaveau1977fermions,
+  author  = {Gaveau, B.},
+  title   = {Principe de moindre action, propagation de la chaleur et estim\'ees sous elliptiques sur certains groupes nilpotents},
+  journal = {Acta Mathematica},
+  volume  = {139},
+  pages   = {95--153},
+  year    = {1977},
+  note    = {[S] \mathbb{H}^n 热核显式闭式}
+}
+
+% ============================================================
+% CR 几何与 Szegő 核
+% ============================================================
+
+@article{boutetdesmonvel1976szego,
+  author  = {Boutet de Monvel, L. and Sj\"ostrand, J.},
+  title   = {Sur la singularit\'e des noyaux de {B}ergman et de {S}zeg\"o},
+  journal = {Ast\'erisque},
+  volume  = {34--35},
+  pages   = {123--164},
+  year    = {1976},
+  note    = {[S] Szeg\"o 核 FIO 渐近, 弯曲模型理论依据}
+}
+
+@book{boutetdesmonvelguillemin1981toeplitz,
+  author    = {Boutet de Monvel, L. and Guillemin, V.},
+  title     = {The Spectral Theory of {T}oeplitz Operators},
+  publisher = {Princeton University Press (Annals of Math Studies)},
+  year      = {1981},
+  note      = {[S] Toeplitz 算子框架, 曲率 symbol 进入低阶项}
+}
+
+@article{bealsgreinerstanton1984heat,
+  author  = {Beals, R. and Greiner, P. C. and Stanton, N. K.},
+  title   = {The heat equation on a {CR} manifold},
+  journal = {Journal of Differential Geometry},
+  year    = {1984},
+  note    = {[S] 热核 parametrix 构造, 平坦解+曲率 transport}
+}
+
+@article{hirachi1998szego,
+  author  = {Hirachi, K.},
+  title   = {Scalar pseudo-{H}ermitian invariants and the {S}zeg\"o kernel on three-dimensional {CR} manifolds},
+  journal = {Osaka Journal of Mathematics},
+  year    = {1998},
+  note    = {[S] Webster/Chern-Moser 曲率不变量决定 Szeg\"o 展开系数}
+}
+
+@book{dragomirtomassini2006cr,
+  author    = {Dragomir, S. and Tomassini, G.},
+  title     = {Differential Geometry and Analysis on {CR} Manifolds},
+  publisher = {Birkh\"auser},
+  year      = {2006},
+  note      = {[S] CR 流形分析参考}
+}
+
+% ============================================================
+% 子 Riemannian 微扰展开（混合方案核心依据）
+% ============================================================
+
+@article{barilari2012trace,
+  author  = {Barilari, D.},
+  title   = {Trace heat kernel asymptotics in {3D} contact sub-{R}iemannian geometry},
+  journal = {arXiv preprint arXiv:1105.1285},
+  year    = {2012},
+  note    = {[S] 已验证. 微扰方法显式计算前两项系数, 用不变量 \chi,\kappa}
+}
+
+@article{barilari2016biheisenberg,
+  author  = {Barilari, D. and Boscain, U. and Gauthier, J.-P. and Sigalotti, M.},
+  title   = {Heat kernel asymptotics on sub-{R}iemannian manifolds with symmetries and applications to the bi-{H}eisenberg group},
+  journal = {arXiv preprint arXiv:1606.01159},
+  year    = {2016},
+  note    = {[S] 子 Riemannian 特有对数修正项 \log\rho}
+}
+
+@article{barilari2015curvature,
+  author  = {Barilari, D. and Rizzi, L.},
+  title   = {Curvature terms in small time heat kernel expansion for a model class of hypoelliptic {H}\"ormander operators},
+  journal = {arXiv preprint arXiv:1510.04925},
+  year    = {2015},
+  note    = {[S] 曲率项进入热核展开的显式形式}
+}
+
+% ============================================================
+% 离散 Heisenberg 群 FFT（速度依据）
+% ============================================================
+
+@article{diaconisrockmore1990efficient,
+  author  = {Diaconis, P. and Rockmore, D.},
+  title   = {Efficient computation of the {F}ourier transform on finite groups},
+  journal = {Journal of the American Mathematical Society},
+  volume  = {3},
+  number  = {2},
+  pages   = {297--332},
+  year    = {1990},
+  note    = {[S] 有限群 FFT O(N\log N), 含有限 Heisenberg 群 H_p}
+}
+
+@book{clausenbaum1993fft,
+  author    = {Clausen, M. and Baum, U.},
+  title     = {Fast {F}ourier Transforms for Solvable Groups},
+  publisher = {Springer},
+  year      = {1993},
+  note      = {[S] 可解群 FFT 框架}
+}
+
+@article{maslen1998fft,
+  author  = {Maslen, D. K.},
+  title   = {Efficient computation of character sums and {F}ourier transforms on finite groups},
+  journal = {Journal of Fourier Analysis and Applications},
+  year    = {1998},
+  note    = {[S] separation of variables 方法}
+}
+
+% ============================================================
+% 子椭圆谱理论
+% ============================================================
+
+@article{strichartz2007large,
+  author  = {Strichartz, R. S.},
+  title   = {Large scale asymptotics of the spectrum of sub-{L}aplacians on compact nilmanifolds},
+  journal = {Bulletin des Sciences Math\'ematiques},
+  year    = {2007},
+  note    = {[S] 紧商 \Gamma\backslash\mathbb{H}^n 上谱离散显式}
+}
+
+@article{mullerriccistein1995marcinkiewicz,
+  author  = {M\"uller, D. and Ricci, F. and Stein, E. M.},
+  title   = {Marcinkiewicz multipliers and multi-parameter structure on {H}eisenberg (-type) groups},
+  journal = {Inventiones Mathematicae},
+  year    = {1995},
+  note    = {[S] 乘子定理, CR-Sobolev 范数等价性}
+}
+
+@book{calinchangfurutani2009subriemannian,
+  author    = {Calin, O. and Chang, D.-C. and Furutani, K.},
+  title     = {Sub-{R}iemannian Geometry: General Theory and Examples},
+  publisher = {Cambridge University Press},
+  year      = {2009},
+  note      = {[S] 子拉普拉斯谱理论参考}
+}
+
+% ============================================================
+% 注意力的核机器视角（类比, 非等价）
+% ============================================================
+
+@article{tsai2019attention,
+  author  = {Tsai, Y.-H. H. and Bai, S. and Morency, R.-P. and Salakhutdinov, R.},
+  title   = {Attention is a Generalized Kernel Machine},
+  journal = {arXiv preprint arXiv:2006.06238},
+  year    = {2019},
+  note    = {[C] 注意力作为核机器, 非相干态直接对应}
+}
+
+@article{katharopoulos2020linear,
+  author  = {Katharopoulos, A. and Fleuret, F. and Jaggi, M.},
+  title   = {Transformers are {RNN}s: Fast Autoregressive Transformers with Linear Attention},
+  journal = {arXiv preprint arXiv:2006.16236},
+  year    = {2020},
+  note    = {[C] 线性注意力核视角}
+}
+
+@article{choromanski2020performers,
+  author  = {Choromanski, K. and Likhosherstov, V. and Dohan, D. and others},
+  title   = {Rethinking Attention with Performers},
+  journal = {arXiv preprint arXiv:2009.14794},
+  year    = {2020},
+  note    = {[C] FAVOR+ random Fourier features 逼近 softmax 核}
+}
+
+% ============================================================
+% Bargmann / 相干态（结构类比, 弱文献支撑）
+% ============================================================
+
+@book{bargmann1961hilbert,
+  author    = {Bargmann, V.},
+  title     = {On a Hilbert space of analytic functions and an associated integral transform},
+  publisher = {Communications on Pure and Applied Mathematics},
+  year      = {1961},
+  note      = {[S] Segal-Bargmann 空间, 再生核 e^{z\bar w}; 与 softmax 仅结构类比}
+}
+
+% ============================================================
+% 工程后端（MLX / PyTorch）
+% ============================================================
+
+@misc{mlx2024,
+  author    = {{Apple MLX team}},
+  title     = {{MLX}: An array framework for machine learning on {A}pple silicon},
+  howpublished = {\url{https://github.com/ml-explore/mlx}},
+  note      = {[S] custom metal kernel, complex64, mlx.core.fft}
+}
+
+@misc{mlxcustomkernel,
+  author    = {{Apple MLX team}},
+  title     = {Custom {M}etal kernels in {MLX}},
+  howpublished = {\url{https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html}},
+  note      = {[S] mx.fast.metal\_kernel, mx.custom\_function, vjp 机制}
+}
+
+@misc{arrayapi,
+  author    = {{Array API standard consortium}},
+  title     = {{Python array API standard}},
+  howpublished = {\url{https://data-apis.org/array-api/}},
+  note      = {[C] 双后端抽象设计依据; PyTorch 支持仍 experimental}
+}

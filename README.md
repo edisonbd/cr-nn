@@ -157,4 +157,4 @@ This project was developed and completed with the assistance of **DeepSeek Pro**
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [Apache License 2.0](LICENSE).

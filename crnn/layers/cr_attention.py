@@ -35,6 +35,7 @@ import torch.nn as nn
 
 from ..geometry.operators import szego_kernel_flat
 from .cr_attention_backend import cr_group_convolve
+from ..curvature.perturbation import apply_log_correction, apply_perturbation
 
 
 def _nearest_prime(n: int) -> int:
@@ -90,20 +91,26 @@ class CRAttention(nn.Module):
     """
 
     def __init__(self, d_model: int, p: int | None = None, n_cr: int = 1,
-                 M: int = 0, eta: float = 1e-6, gate: bool = True):
+                 M: int = 0, eta: float = 1e-6, gate: bool = True,
+                 eps_max: float = 0.1, log_correction: bool = False,
+                 eps_init: float = 0.0):
         super().__init__()
         self.d_model = d_model
         self.n_cr = n_cr
         self.M = M
         self.eta = eta
         self.gate = gate
+        self.eps_max = eps_max
+        self.log_correction = log_correction
         self.p = p
         if p is not None:
             if not _is_prime(p):
                 raise ValueError(f"p={p} must be prime (see docs/assumptions.md R7)")
         # learnable curvature amplitudes (math.md §5.2); init 0 -> start flat
         if M > 0:
-            self.eps = nn.Parameter(torch.zeros(M))
+            self.eps = nn.Parameter(torch.full((M,), eps_init))
+        if log_correction:
+            self.eps_log = nn.Parameter(torch.zeros(1))
         # output complex->real mix
         self.out_proj = nn.Linear(d_model * 2, d_model)
 
@@ -175,11 +182,15 @@ class CRAttention(nn.Module):
         return self._kernel_cache[key]
 
     def _apply_perturbation(self, out, p):
-        # L_j[f] = Δ_b^j (f): placeholder using Δ_b spectral weights.
-        # Full implementation in M5 (curvature ablation); M3 runs flat (M=0).
-        raise NotImplementedError(
-            "curvature perturbation is M5 work; set M=0 for M3"
-        )
+        # S_curved f ~= S_flat f + sum_j eps_j * Delta_b^j[S_flat f]
+        # (math.md section 5; Barilari arXiv:1105.1285).  Soft constraint
+        # |eps| <= eps_max via tanh reparametrisation; init 0 -> starts flat.
+        eps_eff = self.eps_max * torch.tanh(self.eps)
+        out = apply_perturbation(out, eps_eff, self.M, normalize=True)
+        if self.log_correction:
+            eps_log_eff = self.eps_max * torch.tanh(self.eps_log)
+            out = apply_log_correction(out, eps_log_eff, p, self.eta)
+        return out
 
     def _dbar_energy(self, f, p):
         """|∂̄_b f| energy, used for gating. Spectral, O(p^3 log p).

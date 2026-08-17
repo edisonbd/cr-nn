@@ -70,12 +70,13 @@ def X_vector_fields(f, axis_t: int = -1, backend: Backend | None = None):
     for j in range(n):
         # ∂_{x_j}: spectral derivative along the x axis. We use FFT-based
         # derivative for exactness on the eigenfunction test.
-        x_axis = 2 * j            # axis index of x_j (0-based from left)
+        x_axis = axis_t - 2 * n + 2 * j   # x_j sits 2(n-j) before the t axis
         dx = _spectral_deriv(f_hat, axis=x_axis, backend=b)
         # 2 i λ y_j: y_j is at axis 2j+1; we need the y coordinate values.
-        y_axis = 2 * j + 1
-        y_coords = _coord_grid(f_hat.shape[y_axis], b).reshape(
-            [f_hat.shape[a] if a == y_axis else 1 for a in range(f_hat.ndim)]
+        y_axis = axis_t - 2 * n + 2 * j + 1
+        ya = y_axis % f_hat.ndim
+        y_coords = _coord_grid(f_hat.shape[ya], b).reshape(
+            [f_hat.shape[a] if a == ya else 1 for a in range(f_hat.ndim)]
         )
         term = dx + 2j * lam * y_coords * f_hat
         results.append(term)
@@ -96,11 +97,12 @@ def Y_vector_fields(f, axis_t: int = -1, backend: Backend | None = None):
     n = (f_hat.ndim - 1) // 2
     results = []
     for j in range(n):
-        y_axis = 2 * j + 1
+        y_axis = axis_t - 2 * n + 2 * j + 1
         dy = _spectral_deriv(f_hat, axis=y_axis, backend=b)
-        x_axis = 2 * j
-        x_coords = _coord_grid(f_hat.shape[x_axis], b).reshape(
-            [f_hat.shape[a] if a == x_axis else 1 for a in range(f_hat.ndim)]
+        x_axis = axis_t - 2 * n + 2 * j
+        xa = x_axis % f_hat.ndim
+        x_coords = _coord_grid(f_hat.shape[xa], b).reshape(
+            [f_hat.shape[a] if a == xa else 1 for a in range(f_hat.ndim)]
         )
         term = dy - 2j * lam * x_coords * f_hat
         results.append(term)
@@ -157,31 +159,35 @@ def Delta_b(f, axis_t: int = -1, backend: Backend | None = None):
 def _apply_Xj(field, j, ndim, axis_t, b):
     """Apply X_j to a single field already in λ-domain."""
     # Reuse the per-j computation factored out of X_vector_fields.
-    x_axis = 2 * j
+    n = (ndim - 1) // 2
+    x_axis = axis_t - 2 * n + 2 * j
     dx = _spectral_deriv(field, axis=x_axis, backend=b)
     p = field.shape[axis_t]
     lam = _freq_grid(p, b)
     lam_shape = [1] * field.ndim
     lam_shape[axis_t] = p
     lam = lam.reshape(lam_shape)
-    y_axis = 2 * j + 1
-    y_coords = _coord_grid(field.shape[y_axis], b).reshape(
-        [field.shape[a] if a == y_axis else 1 for a in range(field.ndim)]
+    y_axis = axis_t - 2 * n + 2 * j + 1
+    ya = y_axis % field.ndim
+    y_coords = _coord_grid(field.shape[ya], b).reshape(
+        [field.shape[a] if a == ya else 1 for a in range(field.ndim)]
     )
     return dx + 2j * lam * y_coords * field
 
 
 def _apply_Yj(field, j, ndim, axis_t, b):
-    y_axis = 2 * j + 1
+    n = (ndim - 1) // 2
+    y_axis = axis_t - 2 * n + 2 * j + 1
     dy = _spectral_deriv(field, axis=y_axis, backend=b)
     p = field.shape[axis_t]
     lam = _freq_grid(p, b)
     lam_shape = [1] * field.ndim
     lam_shape[axis_t] = p
     lam = lam.reshape(lam_shape)
-    x_axis = 2 * j
-    x_coords = _coord_grid(field.shape[x_axis], b).reshape(
-        [field.shape[a] if a == x_axis else 1 for a in range(field.ndim)]
+    x_axis = axis_t - 2 * n + 2 * j
+    xa = x_axis % field.ndim
+    x_coords = _coord_grid(field.shape[xa], b).reshape(
+        [field.shape[a] if a == xa else 1 for a in range(field.ndim)]
     )
     return dy - 2j * lam * x_coords * field
 

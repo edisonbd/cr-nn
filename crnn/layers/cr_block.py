@@ -25,10 +25,14 @@ class CRBlock(nn.Module):
 
     def __init__(self, d_model: int, p: int | None = None, n_cr: int = 1,
                  M: int = 0, eta: float = 1e-6, gate: bool = True,
-                 ff_expansion: int = 4):
+                 ff_expansion: int = 4, eps_max: float = 0.1,
+                 log_correction: bool = False, eps_init: float = 0.0):
         super().__init__()
         self.norm1 = nn.LayerNorm(d_model)
-        self.attn = CRAttention(d_model, p=p, n_cr=n_cr, M=M, eta=eta, gate=gate)
+        self.attn = CRAttention(d_model, p=p, n_cr=n_cr, M=M, eta=eta,
+                                gate=gate, eps_max=eps_max,
+                                log_correction=log_correction,
+                                eps_init=eps_init)
         self.norm2 = nn.LayerNorm(d_model)
         # CR-FFN works on 2*d (real||imag); wrap with d<->2d projection
         self.ffn = CRFeedForward(d_model, expansion=ff_expansion)

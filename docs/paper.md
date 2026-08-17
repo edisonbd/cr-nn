@@ -377,6 +377,8 @@ At matched fp32 precision CR is **16.7× faster and uses 12.5× less memory**
 ($1/0.08$) at $N{=}12{,}167$, with the crossover at $N\approx 1331$ and the gap
 widening as $O(N\log N)$ vs $O(N^2)$.
 
+![Long-context speed crossover](fig_speed.png)
+
 **The bf16 flash caveat.** The only way softmax attention escapes its $O(N^2)$
 memory is the fused flash kernel, which *requires* bf16/fp16 — fp32 flash does
 not engage it. flash is therefore *forced* to half precision, while CR is
@@ -536,6 +538,8 @@ isolates the cause and a fix:
 | **LDR: $Q\star K$ + low-rank residual ($r{=}64$)** | **1201** | **1.12×** |
 | Qwen2-style (GQA+RoPE, flash) | 1068 | 1.00× |
 | GPT-2 (MHA, flash) | 1301 | 1.22× |
+
+![Precision evolution](fig_precision.png)
 
 Three findings. **(i)** The complex dimension is *pure overhead*: the abelian
 scalar flow gains no precision from complex structure (dropping it *improves*

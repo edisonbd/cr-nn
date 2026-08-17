@@ -1,4 +1,4 @@
-"""Piecewise-CR attention ("断点流形"): activation-segmented spectral flow.
+"""Piecewise-CR attention (piecewise manifold): activation-segmented spectral flow.
 
 User direction (2026-08-15): keep the *CR manifold structure* as the whole
 replacement for softmax (no Euclidean fallback, no hybrid flat+curvature

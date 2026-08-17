@@ -1,4 +1,4 @@
-"""Tests for the piecewise-manifold (断点流形) attention.
+"""Tests for the piecewise-manifold attention.
 
 Covers the modReLU radial breakpoint, the PiecewiseCRAttention layer across
 its spectrum/nl variants, the PiecewiseCRBlock, the ToyLM ``cr-vec`` +

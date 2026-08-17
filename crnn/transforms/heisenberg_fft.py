@@ -1,6 +1,6 @@
 """Finite Heisenberg group H_p: matrix-valued group Fourier transform.
 
-Correct, numerically-verified implementation (往返 ~1e-15, Parseval ~1e-15,
+Correct, numerically-verified implementation (round-trip ~1e-15, Parseval ~1e-15,
 convolution vs naive ~1e-14 for prime p = 3, 5, 7, 11).
 
 KEY CONSTRAINT: p must be prime. For composite p the Schrödinger family

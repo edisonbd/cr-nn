@@ -17,6 +17,38 @@ growing linearly — no KV cache, no window, no summarization heuristics.
 
 ---
 
+## 🤝 Call for collaboration
+
+This is an open problem, not a finished product. **We are actively looking for
+collaborators** on two specific, well-scoped questions:
+
+1. **CR-attention precision** — the LDR attention reaches 1.12× of a Qwen2-style
+   baseline but has not closed the gap. Is there a matrix-free sub-quadratic
+   interaction that beats it?
+2. **CR-attention memory** — the FFT is locked to fp32 (cuFFT fp16 is power-of-2
+   only, incompatible with prime group order), so it is 2× the memory of bf16
+   flash. Is there a half-precision path (or a different transform) that
+   recovers the memory?
+
+These are documented precisely in [`docs/open_problems.md`](docs/open_problems.md).
+
+**The one thing we believe is already solved — and want validated at scale — is
+the O(1) unbounded context** (`block_recurrent.py`): a fixed-size running state
+replacing the KV cache. It is easy to describe, easy to re-implement, and —
+because it is $O(1)$ — the most likely part to be independently rediscovered.
+If you work on long-context decoding, please try it and tell us if it holds up
+on real models (see the call-out below).
+
+### Why we are open-sourcing before a paper
+
+Replacing the Transformer's attention turned out to be harder than expected; the
+negative results below are the map. Keeping them private would not protect the
+ideas (the O(1) state especially is simple enough to be rediscovered), and
+would forfeit the one thing that matters — **validation by real use**. So:
+priority by public release, validation by adoption, then a paper if warranted.
+
+---
+
 ## The two ideas
 
 ### 1. Matrix-free attention (LDR): $O(N\log N) + O(Nr)$

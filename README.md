@@ -151,6 +151,10 @@ docs/
 HANDOFF.md            # full project log §1-39
 ```
 
+## Acknowledgements
+
+This project was developed and completed with the assistance of **DeepSeek Pro**.
+
 ## License
 
-MIT (add your choice).
+This project is released under the [MIT License](LICENSE).

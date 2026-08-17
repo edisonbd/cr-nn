@@ -1,95 +1,149 @@
-# 假设清单与风险登记
+# Assumptions and risk register
 
-本文件显式列出 CR-NN 项目所依赖的全部假设、待证命题与已知风险。每条标注稳固性分级与验证方式。论文撰写时引用对应编号。
+This file explicitly lists all assumptions, open propositions, and known risks
+that the CR-NN project depends on. Each entry carries a stability grade and a
+verification method. Cite the corresponding IDs when writing the paper.
 
-## 稳固性分级
+## Stability grades
 
-- **稳固**：经典文献已证，可直接使用，无 caveat。
-- **有条件成立**：在特定条件下成立，需在实现中保证条件或显式标注偏离。
-- **待证**：本项目需自行验证或论证的命题，是研究贡献的一部分。
-
----
-
-## 核心假设
-
-### A1：序列嵌入离散格点（p 必须素数）[稳固，v0.2 修正]
-序列 token 嵌入有限 Heisenberg 群 $H_p$ 的 $p\times p\times p$ 格点。$H_p$ 上群卷积可经矩阵值 Fourier 变换加速：朴素 $O(p^6)$ 降为 $O(p^4)$。
-- 依据：Diaconis & Rockmore 1990；Maslen；Terras；Tao "finite uncertainty principle"。
-- **关键约束**：$p$ 必须素数。合数 $p$ 下 Schrödinger 表示族不完整（$\sum d_\rho^2<|G|$），Plancherel 失效。素数 $p$ 下已数值验证往返误差 ~1e-15、Parseval ~1e-15、卷积 vs 朴素 ~1e-14（p=3,5,7,11）。
-- caveat：矩阵值表示（p×p）实现比标量 FFT 复杂，常数因子更大。需在 M3 测量实际常数与 crossover 点。
-- 群法则采用单向形式 $c=c_1+c_2+a_1b_2$（非连续对称形式 $2(x_1y_2-y_1x_2)$），二者同构。
-- 验证：M2 单元测试（素数 p）比对往返/Parseval/卷积；已通过。
-
-### A2：微扰展开截断 [有条件成立]
-弯曲 CR 流形的 Szegő 投影按 $S_\text{curved}\approx S_\text{flat}+\sum_{j=1}^M\varepsilon^j L_j[S_\text{flat}]$ 截断，误差 $O(\varepsilon^{M+1})$。
-- 依据：Barilari arXiv:1105.1285（子 Riemannian 热核微扰，已验证）；Boutet de Monvel–Sjöstrand 1976（Szegő 核 FIO 渐近）。
-- 条件：$\varepsilon\ll 1$（默认 $|\varepsilon|<0.1$），小时间/高频段。
-- **不可表述为"低秩修正"**：曲率扰动一般满秩，无文献依据。
-- 验证：M5 曲率消融，扫 $M$ 与 $\varepsilon$。
-
-### A3：$\bar\partial_b$ 正则压缩信息 [待证]
-训练损失中 $\mu\|\bar\partial_b\,\mathrm{out}\|^2$ 项推动表示趋向 CR 函数，等价于信息压缩到全纯（复）子空间。
-- 依据：CR 几何定义（$\bar\partial_b f=0$ 即全纯），但"正则项 → 实际信息集中"是经验命题。
-- 验证：M4 测量训练后表示的特征熵 / 谱能量分布，对比有/无 $\bar\partial_b$ 正则。
-
-### A4：截断微扰不损害下游质量 [待证]
-截断微扰下的近似快速变换，其误差不显著损害下游任务质量。
-- 这是整个混合方案成立的核心待证命题。
-- 验证：M3（速度探针确认近似变换数值稳定）+ M4（玩具序列 ppl 与平坦模型对比）。
-- 止损：若 A4 不成立，回退到纯平坦模型（$M=0$），放弃曲率扰动，质量靠特征在 $\mathbb{H}^n$ 中嵌入位置学习。
+- **Solid**: proven in the classical literature, usable directly, no caveat.
+- **Conditional**: holds under specific conditions, which must be enforced in the
+  implementation or flagged as deviations.
+- **Open**: a proposition the project must verify or argue itself — part of the
+  research contribution.
 
 ---
 
-## 已知风险登记
+## Core assumptions
 
-### R1：对数修正项 [高风险]
-子 Riemannian 热核展开在特定阶出现 $\log\rho$ 项（椭圆情形没有），可能落在截断阶 $M$ 上。
-- 影响：若简单当幂次项处理，数值可能不稳定。
-- 缓解：实现中单独标记对数项，提供开关；M5 消融中对比含/不含对数项。
-- 文献：Barilari et al. arXiv:1606.01159（bi-Heisenberg 热核渐近）。
+### A1: Sequence embedding on a discrete lattice ($p$ must be prime) [Solid, v0.2 correction]
+Sequence tokens embed into the $p\times p\times p$ lattice of the finite
+Heisenberg group $H_p$. Group convolution on $H_p$ is accelerated by the
+matrix-valued Fourier transform: naive $O(p^6)$ drops to $O(p^4)$.
+- Basis: Diaconis & Rockmore 1990; Maslen; Terras; Tao "finite uncertainty
+  principle".
+- **Key constraint**: $p$ must be prime. For composite $p$ the Schrödinger
+  representation family is incomplete ($\sum d_\rho^2<|G|$) and Plancherel
+  fails. For prime $p$ it is numerically verified: round-trip error ~1e-15,
+  Parseval ~1e-15, convolution vs naive ~1e-14 (p=3,5,7,11).
+- Caveat: the matrix-valued ($p\times p$) representation is more complex than a
+  scalar FFT, with a larger constant factor; the actual constant and crossover
+  point must be measured (M3).
+- The group law uses the one-sided form $c=c_1+c_2+a_1b_2$ (not the continuous
+  symmetric form $2(x_1y_2-y_1x_2)$); the two are isomorphic.
+- Verification: M2 unit tests (prime $p$) on round-trip/Parseval/convolution;
+  passed.
 
-### R2：特征值重数跳变 [中风险]
-小曲率下谱连续，但 Hermite 简并（$n$ 重）可分裂。若快速变换依赖重数结构，分裂会破坏对角化。
-- 缓解：训练中容许分裂（不硬编码重数），或在微扰项中显式建模分裂。
-- 验证：M5 检查训练后谱结构是否仍近似对角化。
+### A2: Truncated perturbation expansion [Conditional]
+The Szegő projection on a curved CR manifold is truncated as
+$S_\text{curved}\approx S_\text{flat}+\sum_{j=1}^M\varepsilon^j L_j[S_\text{flat}]$,
+with error $O(\varepsilon^{M+1})$.
+- Basis: Barilari arXiv:1105.1285 (sub-Riemannian heat-kernel perturbation,
+  verified); Boutet de Monvel–Sjöstrand 1976 (Szegő-kernel FIO asymptotics).
+- Condition: $\varepsilon\ll 1$ (default $|\varepsilon|<0.1$), small-time /
+  high-frequency regime.
+- **Must not be described as a "low-rank correction"**: the curvature
+  perturbation is generally full-rank, with no literature support.
+- Verification: M5 curvature ablation, sweeping $M$ and $\varepsilon$.
 
-### R3：全局 vs 局部频段 [中风险]
-微扰展开局部（小时间/高频）成立。低频/大尺度行为偏离平坦模型更大。
-- 影响：若网络工作在低频段，曲率近似失效。
-- 缓解：M4 分析网络实际工作频段（谱能量分布）；必要时限制曲率项只作用于高频层。
+### A3: $\bar\partial_b$ regularization compresses information [Open]
+The term $\mu\|\bar\partial_b\,\mathrm{out}\|^2$ in the training loss pushes the
+representation toward CR functions, equivalent to compressing information into
+the holomorphic (complex) subspace.
+- Basis: CR-geometry definition ($\bar\partial_b f=0$ is holomorphic), but
+  "the regularizer actually concentrates information" is an empirical claim.
+- Verification: M4 measures the feature entropy / spectral energy distribution
+  after training, with and without the $\bar\partial_b$ regularizer.
 
-### R4：离散化破坏群结构 [低-中风险]
-连续 $\mathbb{H}^n$ 离散化为 $H_p$ 时，若采样不当可能破坏群卷积结构，使 FFT 加速失效。
-- 缓解：严格使用 $H_p$ 的代数结构（上三角矩阵群），而非连续采样的近似格点。
-- 验证：M2 单元测试中群卷积的 FFT 加速与朴素实现数值一致。
-
-### R5：复幂 branch cut 一致性 [工程风险]
-Korányi/Szegő 核含复幂 $(|z|^2-it)^{-(n+1)}$，双后端 `pow`/`log` 的支点约定须一致。
-- 缓解：显式拆为 $\exp(-(n+1)\cdot\mathrm{Log}(\cdot))$，主支 Log；双后端单元测试比对。
-
-### R6：MLX complex64 覆盖不全 [工程风险]
-MLX 仅 `complex64`（无 `complex128`），冷门复函数 op 可能缺失。
-- 缓解：M2 先 Torch 验证数学；M6 移植 MLX 时逐 op 检查，缺失处拆 real/imag 手写。
-
-### R7：合数 p 不支持 [已解决，记录在案]
-合数 $p$ 下 Schrödinger 表示族不完整，Plancherel/反演失效（v0.2 发现并修复）。
-- 决议：强制 $p$ 为素数。格点分辨率取邻近素数。
-- 若未来需要 $p=2^k$（如对齐硬件瓦片大小），需手工构造射影不可约表示，无统一公式，列为未来工作。
+### A4: Truncated perturbation does not harm downstream quality [Open]
+The error of the approximate fast transform under truncated perturbation does not
+significantly harm downstream-task quality.
+- This is the central open proposition on which the whole hybrid scheme rests.
+- Verification: M3 (speed probe confirms numerical stability) + M4 (toy-sequence
+  ppl compared against the flat model).
+- Stop-loss: if A4 fails, fall back to the pure flat model ($M=0$), abandon the
+  curvature perturbation, and let quality rely on the learnable embedding
+  positions in $\mathbb{H}^n$.
 
 ---
 
-## 叙事合规检查（论文撰写时）
+## Known risk register
 
-撰写论文/文档时必须遵守以下措辞约束，避免被几何分析审稿人质疑：
+### R1: Logarithmic correction term [High risk]
+The sub-Riemannian heat-kernel expansion develops a $\log\rho$ term at a certain
+order (absent in the elliptic case), which may land on the truncation order $M$.
+- Impact: treating it as a power term may be numerically unstable.
+- Mitigation: flag the log term separately in the implementation, with a switch;
+  compare with/without in the M5 ablation.
+- Literature: Barilari et al. arXiv:1606.01159 (bi-Heisenberg heat-kernel
+  asymptotics).
 
-1. ✅ 可说："CR Szegő 投影作为注意力的几何替代"——替代关系，非重解释。
-2. ✅ 可说："截断微扰展开，曲率项为有限阶 symbol 修正"——有 Barilari 等支撑。
-3. ❌ 不可说："softmax = Bargmann 相干态核的离散截断"——无文献支撑，仅结构类比。
-4. ❌ 不可说："曲率项为低秩修正"——曲率扰动一般满秩。
-5. ❌ 不可说："精确 $O(N\log N)$ 快速变换"（在弯曲模型上）——仅平坦模型精确，弯曲为近似。
+### R2: Eigenvalue multiplicity splitting [Medium risk]
+Under small curvature the spectrum is continuous, but the Hermite degeneracy
+(multiplicity $n$) can split. If the fast transform relies on the multiplicity
+structure, splitting breaks the diagonalization.
+- Mitigation: tolerate splitting in training (do not hard-code the multiplicity),
+  or model the splitting explicitly in the perturbation.
+- Verification: M5 checks whether the trained spectrum is still approximately
+  diagonal.
+
+### R3: Global vs local frequency bands [Medium risk]
+The perturbation expansion is local (small-time / high-frequency). Low-frequency
+large-scale behaviour deviates more from the flat model.
+- Impact: if the network operates in the low-frequency band, the curvature
+  approximation fails.
+- Mitigation: M4 analyses the network's actual operating band (spectral energy
+  distribution); if needed, restrict the curvature term to high-frequency layers.
+
+### R4: Discretization breaks the group structure [Low–medium risk]
+Discretizing continuous $\mathbb{H}^n$ to $H_p$ can break the group-convolution
+structure if sampled badly, invalidating the FFT speedup.
+- Mitigation: strictly use the algebraic structure of $H_p$ (upper-triangular
+  matrix group), not an approximate lattice from continuous sampling.
+- Verification: M2 unit tests confirm the FFT group convolution matches the naive
+  implementation numerically.
+
+### R5: Complex-power branch-cut consistency [Engineering risk]
+The Korányi/Szegő kernels contain a complex power $(|z|^2-it)^{-(n+1)}$; the two
+backends' `pow`/`log` branch conventions must agree.
+- Mitigation: explicitly split as $\exp(-(n+1)\cdot\mathrm{Log}(\cdot))$ with the
+  principal-branch Log; cross-check both backends in unit tests.
+
+### R6: MLX complex64 coverage is incomplete [Engineering risk]
+MLX has only `complex64` (no `complex128`), and some uncommon complex ops may be
+missing.
+- Mitigation: validate the math in Torch first (M2); on the M6 MLX port, check
+  op by op and hand-write real/imag splits where needed.
+
+### R7: Composite $p$ unsupported [Resolved, on record]
+For composite $p$ the Schrödinger representation family is incomplete and
+Plancherel/inversion fail (found and fixed in v0.2).
+- Resolution: force $p$ prime; choose neighbouring primes for the lattice
+  resolution.
+- If $p=2^k$ is ever needed (e.g. to align with hardware tile sizes), the
+  projective irreps must be constructed by hand — no uniform formula; listed as
+  future work.
 
 ---
 
-## 版本
+## Narrative compliance (for paper writing)
 
-- v0.1 (2026-08-09)：初版，与 math.md v0.1 对齐。
+When writing the paper/docs, obey the following wording constraints to avoid
+objections from geometric-analysis reviewers:
+
+1. ✅ May say: "the CR Szegő projection as a geometric *replacement* for
+   attention" — replacement, not reinterpretation.
+2. ✅ May say: "a truncated perturbation expansion, the curvature terms being
+   finite-order symbol corrections" — supported by Barilari et al.
+3. ❌ May not say: "softmax = a discrete truncation of the Bargmann coherent-state
+   kernel" — no literature support; structural analogy only.
+4. ❌ May not say: "the curvature term is a low-rank correction" — the curvature
+   perturbation is generally full-rank.
+5. ❌ May not say: "exact $O(N\log N)$ fast transform" (on the curved model) — only
+   the flat model is exact; the curved one is approximate.
+
+---
+
+## Version
+
+- v0.1 (2026-08-09): initial version, aligned with math.md v0.1.

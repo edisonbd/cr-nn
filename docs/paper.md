@@ -203,7 +203,7 @@ approximation, we replace the matrix sector by a *diagonal* spectral operator
 in the abelian $(\mathbb{Z}_p)^3$ Fourier basis, and restore the lost
 non-commutativity by segmentation (next subsection).
 
-### 3.3 Piecewise-manifold attention (断点流形)
+### 3.3 Piecewise-manifold attention
 
 A purely diagonal (abelian) spectral flow is commutative and therefore misses
 the $H_p$ twist, capping quality (this reproduces the negative result of our
